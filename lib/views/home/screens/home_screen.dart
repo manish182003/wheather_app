@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:wheather_app/config/common/app_colors.dart';
 import 'package:wheather_app/config/utils/loader.dart';
+import 'package:wheather_app/config/utils/snackbar.dart';
 import 'package:wheather_app/controllers/weather_controller.dart';
 import 'package:wheather_app/views/home/widgets/current_weather_card.dart';
 import 'package:wheather_app/views/home/widgets/forecast_weather_card.dart';
@@ -81,6 +82,13 @@ class _HomePageState extends State<HomePage> {
                       color: AppColors.primaryTextColor,
                       fontWeight: FontWeight.w500,
                     ),
+                    onSubmitted: (value) {
+                      if (value.isNotEmpty) {
+                        weatherController.searchCityName(value);
+                      } else {
+                        showSnackBar(context, 'Please Enter City Name.');
+                      }
+                    },
 
                     decoration: InputDecoration(
                       filled: false,
@@ -100,11 +108,9 @@ class _HomePageState extends State<HomePage> {
                     return Center(child: Text(weatherController.error.value));
                   }
                   final weather = weatherController.weather.value;
-                  if (weather == null) {
-                    return const Center(
-                      child: Text('No weather data available'),
-                    );
-                  }
+
+                  final forecast = weatherController.forecast.value;
+
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       bool isWideScreen =
@@ -117,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               CurrentWeatherCard(wheatherModel: weather),
                               SizedBox(width: 4.w),
-                              ForecastWeatherCard(wheatherModel: weather),
+                              ForecastWeatherCard(forecastModel: forecast),
                             ],
                           )
                           : Column(
@@ -125,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               CurrentWeatherCard(wheatherModel: weather),
                               SizedBox(height: 4.h),
-                              ForecastWeatherCard(wheatherModel: weather),
+                              ForecastWeatherCard(forecastModel: forecast),
                               SizedBox(height: 5.h),
                             ],
                           );
